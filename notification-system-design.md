@@ -562,3 +562,127 @@ This query returns the unique student IDs of all students who received placement
 ### Conclusion
 
 The existing query is functionally correct but is not optimized for a large dataset. Creating a composite index on `studentId`, `isRead`, and `createdAt` significantly improves performance. Using indexes only where necessary helps maintain a balance between faster query execution and efficient database maintenance.
+
+
+
+
+
+
+# Stage 4
+
+## Performance Improvement
+
+Currently, the application fetches all notifications from the database every time a student opens or refreshes a page. As the number of users increases, this creates a large number of repeated database requests, which increases response time and puts unnecessary load on the database server.
+
+To improve the overall performance, I would use the following approaches.
+
+### 1. Pagination
+
+Instead of loading every notification at once, the application should load a limited number of notifications (for example, 20 notifications per request).
+
+**Advantages**
+
+* Reduces the amount of data transferred.
+* Faster page loading.
+* Lower database load.
+
+**Trade-off**
+
+* Additional API calls are required when the user scrolls or changes pages.
+
+---
+
+### 2. Cache Frequently Accessed Data
+
+Unread notification count and recently viewed notifications can be stored in a cache such as Redis. Instead of querying the database repeatedly, the application can retrieve this information directly from the cache.
+
+**Advantages**
+
+* Faster response time.
+* Reduces database queries.
+* Improves user experience.
+
+**Trade-off**
+
+* Cache needs to be updated whenever notifications are created or marked as read.
+* Adds an extra component to maintain.
+
+---
+
+### 3. Fetch Only Required Data
+
+Instead of using:
+
+```sql
+SELECT *
+```
+
+retrieve only the required columns.
+
+Example:
+
+```sql
+SELECT id, title, type, isRead, createdAt
+FROM notifications
+WHERE studentId = ?
+ORDER BY createdAt DESC;
+```
+
+**Advantages**
+
+* Less data is transferred.
+* Lower memory usage.
+* Faster query execution.
+
+**Trade-off**
+
+* If additional fields are required later, the query must be updated.
+
+---
+
+### 4. Real-Time Notifications
+
+Instead of requesting notifications every few seconds, establish a WebSocket connection after the user logs in. The server can send new notifications instantly whenever they are available.
+
+**Advantages**
+
+* No unnecessary polling.
+* Real-time updates.
+* Better user experience.
+
+**Trade-off**
+
+* WebSocket connections require additional server resources and connection management.
+
+---
+
+### 5. Database Indexing
+
+Create indexes on columns that are frequently used in filtering and sorting, such as `studentId`, `isRead`, and `createdAt`.
+
+**Advantages**
+
+* Faster query execution.
+* Reduced search time.
+
+**Trade-off**
+
+* Indexes consume extra storage.
+* Insert and update operations become slightly slower because indexes also need to be updated.
+
+---
+
+## Recommended Solution
+
+Instead of depending on a single optimization technique, I would combine multiple approaches:
+
+* Use pagination to load notifications in smaller batches.
+* Create proper database indexes.
+* Cache frequently accessed data.
+* Use WebSockets to deliver new notifications instantly.
+
+This combination reduces database load, improves response time, and provides a smoother experience for users while keeping the system scalable as the number of notifications grows.
+
+## Conclusion
+
+Fetching all notifications on every page load is not efficient for a large-scale application. By using pagination, caching, indexing, optimized queries, and real-time communication, the Notification Management System can handle a large number of users while maintaining good performance and a responsive user experience.
