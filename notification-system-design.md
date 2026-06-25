@@ -363,3 +363,125 @@ Notification Displayed Instantly
 - Soft deletion can be considered for future improvements.
 - All timestamps are stored in UTC.
 - JSON is used for all API communication.
+
+
+
+
+
+
+
+
+# Stage 2
+
+## Database Selection
+
+For the Notification Management System, I would use **PostgreSQL** as the primary database because the notification data is highly structured and requires reliable storage. PostgreSQL provides ACID transactions, supports indexing, and performs well when filtering, sorting, and retrieving notifications. It is also scalable enough to handle a growing number of users and notifications.
+
+## Database Schema
+
+The system will have a `notifications` table where each notification contains the following fields:
+
+* `id` – Unique identifier (UUID)
+* `recipientId` – ID of the student receiving the notification
+* `title` – Notification title
+* `message` – Notification content
+* `type` – Notification category (Placement, Event, or Result)
+* `priority` – Priority level (High, Medium, Low)
+* `isRead` – Indicates whether the notification has been read
+* `createdAt` – Timestamp when the notification was created
+* `updatedAt` – Timestamp when the notification was last modified
+
+Indexes should be created on `recipientId`, `type`, `isRead`, and `createdAt` to improve search and retrieval performance.
+
+## Challenges as Data Grows
+
+As the number of notifications increases, fetching unread notifications or filtering by type may become slower. A large notifications table also increases storage usage and database load.
+
+To improve performance, I would:
+
+* Create indexes on frequently searched columns.
+* Use pagination instead of loading all notifications at once.
+* Archive or remove old notifications after a retention period.
+* Use Redis caching for frequently accessed notification data.
+* Process bulk notification creation asynchronously using background jobs or queues.
+* Use database partitioning if the notification table becomes very large.
+
+## SQL Queries
+
+### Create a Notification
+
+```sql
+INSERT INTO notifications
+(recipientId, title, message, type, priority)
+VALUES
+('24B05A4504',
+'Microsoft Hiring',
+'Applications are now open.',
+'Placement',
+'High');
+```
+
+### Get All Notifications
+
+```sql
+SELECT *
+FROM notifications
+ORDER BY createdAt DESC;
+```
+
+### Get Notification by ID
+
+```sql
+SELECT *
+FROM notifications
+WHERE id = 'notification_id';
+```
+
+### Get Unread Notifications
+
+```sql
+SELECT *
+FROM notifications
+WHERE recipientId = '24B05A4504'
+AND isRead = FALSE
+ORDER BY createdAt DESC;
+```
+
+### Mark Notification as Read
+
+```sql
+UPDATE notifications
+SET isRead = TRUE,
+updatedAt = CURRENT_TIMESTAMP
+WHERE id = 'notification_id';
+```
+
+### Delete a Notification
+
+```sql
+DELETE FROM notifications
+WHERE id = 'notification_id';
+```
+
+### Filter Notifications by Type
+
+```sql
+SELECT *
+FROM notifications
+WHERE type = 'Placement'
+ORDER BY createdAt DESC;
+```
+
+### Pagination
+
+```sql
+SELECT *
+FROM notifications
+WHERE recipientId = '24B05A4504'
+ORDER BY createdAt DESC
+LIMIT 20 OFFSET 0;
+```
+
+## Conclusion
+
+PostgreSQL is a suitable choice for this application because it provides strong consistency, efficient indexing, and reliable transaction support. Using indexes, pagination, caching, and asynchronous processing ensures that the notification system continues to perform efficiently even as the number of users and notifications grows.
