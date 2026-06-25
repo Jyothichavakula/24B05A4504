@@ -1,0 +1,76 @@
+{
+  "notifications": [
+    {
+      "ID": "1",
+      "Type": "Placement",
+      "Message": "Microsoft Hiring",
+      "Timestamp": "2026-04-22T17:51:18"
+    },
+    {
+      "ID": "2",
+      "Type": "Result",
+      "Message": "Mid Semester Results",
+      "Timestamp": "2026-04-22T17:50:54"
+    },
+    {
+      "ID": "3",
+      "Type": "Event",
+      "Message": "Tech Fest Registration",
+      "Timestamp": "2026-04-22T17:50:06"
+    },
+    {
+      "ID": "4",
+      "Type": "Placement",
+      "Message": "Amazon Hiring",
+      "Timestamp": "2026-04-22T17:49:42"
+    },
+    {
+      "ID": "5",
+      "Type": "Placement",
+      "Message": "Google Hiring",
+      "Timestamp": "2026-04-22T17:48:30"
+    },
+    {
+      "ID": "6",
+      "Type": "Result",
+      "Message": "Project Review",
+      "Timestamp": "2026-04-22T17:47:20"
+    },
+    {
+      "ID": "7",
+      "Type": "Event",
+      "Message": "Hackathon",
+      "Timestamp": "2026-04-22T17:46:18"
+    },
+    {
+      "ID": "8",
+      "Type": "Placement",
+      "Message": "Adobe Hiring",
+      "Timestamp": "2026-04-22T17:45:10"
+    },
+    {
+      "ID": "9",
+      "Type": "Result",
+      "Message": "External Exam Result",
+      "Timestamp": "2026-04-22T17:44:05"
+    },
+    {
+      "ID": "10",
+      "Type": "Placement",
+      "Message": "Oracle Hiring",
+      "Timestamp": "2026-04-22T17:43:15"
+    },
+    {
+      "ID": "11",
+      "Type": "Event",
+      "Message": "Farewell",
+      "Timestamp": "2026-04-22T17:42:10"
+    },
+    {
+      "ID": "12",
+      "Type": "Result",
+      "Message": "Assignment Results",
+      "Timestamp": "2026-04-22T17:41:00"
+    }
+  ]
+}
