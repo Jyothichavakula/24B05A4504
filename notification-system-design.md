@@ -485,3 +485,80 @@ LIMIT 20 OFFSET 0;
 ## Conclusion
 
 PostgreSQL is a suitable choice for this application because it provides strong consistency, efficient indexing, and reliable transaction support. Using indexes, pagination, caching, and asynchronous processing ensures that the notification system continues to perform efficiently even as the number of users and notifications grows.
+
+
+
+
+
+# Stage 3
+
+## Query Analysis
+
+The existing query is:
+
+```sql
+SELECT *
+FROM notifications
+WHERE studentId = 1042
+AND isRead = false
+ORDER BY createdAt ASC;
+```
+
+### Is this query correct?
+
+Yes. The query correctly retrieves all unread notifications for a particular student and displays them in ascending order based on the creation time.
+
+### Why is it slow?
+
+Initially, this query may have worked well because the database contained only a small amount of data. However, as the application grows to around **50,000 students** and **5 million notifications**, the performance starts degrading.
+
+The main reasons are:
+
+* The database has to search through a very large notifications table.
+* If there is no suitable index, it performs a full table scan.
+* After finding the matching records, it sorts them using `createdAt`, which adds extra processing time.
+
+As the amount of data increases, the response time also increases.
+
+### How can this be improved?
+
+Instead of scanning the entire table, I would create a **composite index** on the columns that are frequently used together in this query.
+
+```sql
+CREATE INDEX idx_notifications_student_read_created
+ON notifications(studentId, isRead, createdAt);
+```
+
+This allows the database to quickly locate unread notifications of a specific student while also returning them in the required order.
+
+### Computational Cost
+
+* **Without an index:** approximately **O(N)** because the database may scan all notification records.
+* **With the composite index:** approximately **O(log N)** for searching, making the query much faster.
+
+### Should indexes be added on every column?
+
+No.
+
+Adding indexes on every column is not a good practice because:
+
+* Every index consumes additional storage.
+* Insert, Update and Delete operations become slower since all indexes must also be updated.
+* Many indexes may never be used by queries.
+
+Instead, indexes should only be created on columns that are frequently used in filtering, sorting, or joining.
+
+### Query to Find Students Who Received Placement Notifications in the Last 7 Days
+
+```sql
+SELECT DISTINCT studentId
+FROM notifications
+WHERE notificationType = 'Placement'
+AND createdAt >= CURRENT_DATE - INTERVAL '7 days';
+```
+
+This query returns the unique student IDs of all students who received placement notifications during the last seven days.
+
+### Conclusion
+
+The existing query is functionally correct but is not optimized for a large dataset. Creating a composite index on `studentId`, `isRead`, and `createdAt` significantly improves performance. Using indexes only where necessary helps maintain a balance between faster query execution and efficient database maintenance.
