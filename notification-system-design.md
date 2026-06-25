@@ -22,21 +22,35 @@ Accept: application/json
 
 ---
 
-# Notification Object Schema
+## Notification Object Schema
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | UUID | Yes | Unique Notification ID |
-| recipientId | String | Yes | Student/User ID |
-| title | String | Yes | Notification Title |
-| message | String | Yes | Notification Message |
-| type | String | Yes | Placement / Event / Result |
-| priority | String | Yes | High / Medium / Low |
-| isRead | Boolean | Yes | Read Status |
-| createdAt | DateTime | Yes | Creation Timestamp |
-| updatedAt | DateTime | Yes | Last Updated Timestamp |
+A notification object contains the following fields:
 
----
+```json
+{
+  "id": "UUID",
+  "recipientId": "24B05A4504",
+  "title": "Microsoft Hiring",
+  "message": "Microsoft has opened applications.",
+  "type": "Placement",
+  "priority": "High",
+  "isRead": false,
+  "createdAt": "2026-06-25T10:30:00Z",
+  "updatedAt": "2026-06-25T10:30:00Z"
+}
+```
+
+### Field Description
+
+- **id** – Unique identifier for the notification.
+- **recipientId** – Unique ID of the student/user receiving the notification.
+- **title** – Short title of the notification.
+- **message** – Detailed notification content.
+- **type** – Category of the notification (Placement, Event, or Result).
+- **priority** – Priority level (High, Medium, or Low).
+- **isRead** – Indicates whether the notification has been read.
+- **createdAt** – Timestamp when the notification was created.
+- **updatedAt** – Timestamp when the notification was last updated.
 
 # REST API Endpoints
 
